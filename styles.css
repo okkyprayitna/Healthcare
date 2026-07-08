@@ -1,8 +1,8 @@
 /* ===================== Variables & Reset ===================== */
 :root {
-  --color-primary: #1a6ea8;
-  --color-primary-dark: #12507c;
-  --color-teal: #2c9a8f;
+  --color-primary: #1a8f5c;
+  --color-primary-dark: #136b45;
+  --color-teal: #2c9a6f;
   --color-accent: #ee7d4f;
   --color-accent-dark: #d9662f;
   --color-text: #1f2b3a;
@@ -273,7 +273,7 @@ h1, h2, h3 {
 /* ===================== Hero ===================== */
 .hero {
   background:
-    linear-gradient(135deg, rgba(26, 110, 168, 0.88) 0%, rgba(44, 154, 143, 0.88) 100%),
+    linear-gradient(135deg, rgba(26, 143, 92, 0.88) 0%, rgba(44, 154, 111, 0.88) 100%),
     url("https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=1600&q=70&auto=format&fit=crop") center / cover no-repeat;
   color: #fff;
   padding: 5rem 1.5rem 4rem;
