@@ -4,6 +4,8 @@ A static, single-page marketing website for a fictional healthcare clinic. Built
 
 **Live site:** https://okkyprayitna.github.io/Healthcare/
 
+![Harborview Clinic homepage screenshot](assets/screenshot.png)
+
 ## Features
 
 - Sticky, responsive navbar with a mobile hamburger menu and smooth-scroll anchor links
@@ -23,10 +25,12 @@ A static, single-page marketing website for a fictional healthcare clinic. Built
 ## Project structure
 
 ```
-├── index.html   # all markup
-├── styles.css   # all styling
-├── script.js    # all behavior
-└── CLAUDE.md    # guidance for AI coding agents working in this repo
+├── index.html          # all markup
+├── styles.css          # all styling
+├── script.js           # all behavior
+├── assets/screenshot.png  # homepage preview used in this README
+├── .mcp.json           # project-level Playwright MCP server config
+└── CLAUDE.md           # guidance for AI coding agents working in this repo
 ```
 
 ## Running locally
