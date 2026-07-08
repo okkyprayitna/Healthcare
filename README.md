@@ -8,29 +8,35 @@ A static, single-page marketing website for a fictional healthcare clinic. Built
 
 ## Features
 
-- Sticky, responsive navbar with a mobile hamburger menu and smooth-scroll anchor links
-- Hero section with a headline, dual call-to-action buttons, and a trust-indicator strip
+- Sticky, responsive navbar with a mobile hamburger menu, smooth-scroll anchor links, and a beacon-mark logo
+- Hero section with an animated "beacon" signature graphic (rotating light sweep, pulsing horizon dot), dual call-to-action buttons, and a trust-indicator strip with a count-up animation
+- Why-Choose-Us section calling out same-week appointments, board-certified specialists, transparent pricing, and dedicated care coordinators
 - Services section highlighting general checkups, pediatrics, cardiology, and dental care
 - Patient testimonials with initials avatars and star ratings
-- Appointment enquiry form with client-side validation (inline error messages, no `alert()`) and a success state
-- Scroll-triggered fade-in animations via `IntersectionObserver`
+- Appointment enquiry form with client-side validation (inline error messages, no `alert()`) and a success state that links to a free New Patient Checklist
+- `new-patient-checklist.html` — a standalone, printable lead-magnet page (`noindex`) with checkable prep lists
+- Scroll-triggered fade-in animations via `IntersectionObserver`, with `prefers-reduced-motion` respected throughout
 - Footer with quick links, social placeholders, and a JS-injected copyright year
 
 ## Tech stack
 
-- **HTML5** — semantic markup (`index.html`)
-- **CSS3** — custom properties, mobile-first layout with breakpoints at 640px / 768px / 992px (`styles.css`)
+- **HTML5** — semantic markup (`index.html`, `new-patient-checklist.html`)
+- **CSS3** — custom properties (ink-navy/brass/cream palette), mobile-first layout with breakpoints at 640px / 768px / 992px (`styles.css`)
 - **Vanilla JavaScript** — no libraries (`script.js`)
+- **Fonts** — Fraunces (display) + Inter (body), loaded from Google Fonts
 
 ## Project structure
 
 ```
-├── index.html          # all markup
-├── styles.css          # all styling
-├── script.js           # all behavior
-├── assets/screenshot.png  # homepage preview used in this README
-├── .mcp.json           # project-level Playwright MCP server config
-└── CLAUDE.md           # guidance for AI coding agents working in this repo
+├── index.html                  # homepage markup
+├── new-patient-checklist.html  # printable lead-magnet page, linked from the enquiry form
+├── styles.css                  # all styling
+├── script.js                   # all behavior
+├── favicon.svg                 # beacon-mark favicon
+├── robots.txt, sitemap.xml     # basic SEO
+├── assets/screenshot.png       # homepage preview used in this README
+├── .mcp.json                   # project-level Playwright MCP server config
+└── CLAUDE.md                   # guidance for AI coding agents working in this repo
 ```
 
 ## Running locally
@@ -47,4 +53,4 @@ The site is deployed to GitHub Pages automatically via GitHub Actions (`.github/
 
 ## Notes
 
-The enquiry form is client-side only — on submit it validates the fields and logs the collected data to the browser console instead of sending it anywhere. The spot for wiring up a real backend API call is marked with a `TODO` comment in `initEnquiryForm` in `script.js`.
+The enquiry form is client-side only — on submit it validates the fields and logs the collected data to the browser console instead of sending it anywhere. The spot for wiring up a real backend API call is marked with a `TODO` comment in `initEnquiryForm` in `script.js`. The post-submit link to the New Patient Checklist is instant (no email is actually sent).
