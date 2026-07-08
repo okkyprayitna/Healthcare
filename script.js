@@ -4,12 +4,15 @@ document.addEventListener('DOMContentLoaded', () => {
   initFooterYear();
   initEnquiryForm();
   initStatCounters();
+  initWhatsAppWidget();
 });
 
 /* ===================== Mobile nav toggle ===================== */
 function initMobileNav() {
   const toggle = document.getElementById('navToggle');
   const menu = document.getElementById('navMenu');
+
+  if (!toggle || !menu) return;
 
   toggle.addEventListener('click', () => {
     const isOpen = menu.classList.toggle('is-open');
@@ -51,6 +54,7 @@ function initFadeInOnScroll() {
 /* ===================== Footer year ===================== */
 function initFooterYear() {
   const yearEl = document.getElementById('year');
+  if (!yearEl) return;
   yearEl.textContent = new Date().getFullYear();
 }
 
@@ -104,7 +108,11 @@ function initStatCounters() {
 /* ===================== Enquiry form ===================== */
 function initEnquiryForm() {
   const form = document.getElementById('enquiryForm');
+  if (!form) return;
+
   const successMessage = document.getElementById('formSuccess');
+  const errorMessage = document.getElementById('formError');
+  const submitButton = form.querySelector('.form-submit');
 
   const fields = {
     fullName: {
@@ -151,30 +159,113 @@ function initEnquiryForm() {
     if (firstInvalidInput) {
       firstInvalidInput.focus();
       successMessage.hidden = true;
+      errorMessage.hidden = true;
       return;
     }
 
-    const data = {
-      fullName: form.elements.fullName.value.trim(),
-      email: form.elements.email.value.trim(),
-      phone: form.elements.phone.value.trim(),
-      preferredDate: form.elements.preferredDate.value,
-      message: form.elements.message.value.trim(),
-    };
+    successMessage.hidden = true;
+    errorMessage.hidden = true;
+    submitButton.disabled = true;
 
-    // TODO: replace with a real API call, e.g.
-    // fetch('/api/appointments', {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify(data),
-    // });
-    console.log('Appointment request submitted:', data);
+    fetch('https://formspree.io/f/xgojbljq', {
+      method: 'POST',
+      headers: { Accept: 'application/json' },
+      body: new FormData(form),
+    })
+      .then((response) => {
+        if (!response.ok) throw new Error('Formspree request failed');
 
-    successMessage.hidden = false;
-    form.reset();
-    Object.values(fields).forEach(({ input, error }) => {
-      error.textContent = '';
-      input.setAttribute('aria-invalid', 'false');
-    });
+        successMessage.hidden = false;
+        form.reset();
+        Object.values(fields).forEach(({ input, error }) => {
+          error.textContent = '';
+          input.setAttribute('aria-invalid', 'false');
+        });
+        celebrateSubmission();
+      })
+      .catch(() => {
+        errorMessage.hidden = false;
+      })
+      .finally(() => {
+        submitButton.disabled = false;
+      });
+  });
+}
+
+/* ===================== Post-submit celebration (voice + balloons) ===================== */
+function celebrateSubmission() {
+  speakThankYou();
+  launchBalloons();
+}
+
+function speakThankYou() {
+  if (!('speechSynthesis' in window)) return;
+
+  const utterance = new SpeechSynthesisUtterance(
+    'Hurray, thank you for submission. We will get back in 3 business days.'
+  );
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(utterance);
+}
+
+function launchBalloons() {
+  const container = document.getElementById('balloonContainer');
+  if (!container || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const colors = ['#c8913f', '#e0b06e', '#10263d', '#256b3e', '#9a3324'];
+
+  for (let i = 0; i < 10; i++) {
+    const balloon = document.createElement('span');
+    balloon.className = 'balloon';
+    balloon.style.left = `${Math.random() * 90 + 2}%`;
+    balloon.style.background = colors[i % colors.length];
+    balloon.style.animationDelay = `${(Math.random() * 0.6).toFixed(2)}s`;
+    balloon.style.setProperty('--drift', `${Math.round(Math.random() * 80 - 40)}px`);
+    balloon.addEventListener('animationend', () => balloon.remove());
+    container.appendChild(balloon);
+  }
+}
+
+/* ===================== WhatsApp chat widget ===================== */
+function initWhatsAppWidget() {
+  const button = document.getElementById('waButton');
+  const panel = document.getElementById('waPanel');
+  const closeButton = document.getElementById('waPanelClose');
+
+  if (!button || !panel || !closeButton) return;
+
+  const widget = button.closest('.wa-widget');
+
+  const closePanel = () => {
+    panel.hidden = true;
+    button.setAttribute('aria-expanded', 'false');
+  };
+
+  const openPanel = () => {
+    panel.hidden = false;
+    button.setAttribute('aria-expanded', 'true');
+  };
+
+  button.addEventListener('click', () => {
+    if (panel.hidden) {
+      openPanel();
+    } else {
+      closePanel();
+    }
+  });
+
+  closeButton.addEventListener('click', closePanel);
+
+  document.addEventListener('click', (e) => {
+    if (!panel.hidden && !widget.contains(e.target)) {
+      closePanel();
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !panel.hidden) {
+      closePanel();
+      button.focus();
+    }
   });
 }
