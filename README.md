@@ -13,7 +13,9 @@ A static, single-page marketing website for a fictional healthcare clinic. Built
 - Why-Choose-Us section calling out same-week appointments, board-certified specialists, transparent pricing, and dedicated care coordinators
 - Services section highlighting general checkups, pediatrics, cardiology, and dental care
 - Patient testimonials with initials avatars and star ratings
-- Appointment enquiry form with client-side validation (inline error messages, no `alert()`) and a success state that links to a free New Patient Checklist
+- Appointment enquiry form with client-side validation (inline error messages, no `alert()`), submitted via Formspree so enquiries are emailed automatically, with success/error states and a link to a free New Patient Checklist
+- Post-submission celebration — a spoken thank-you message (Web Speech API) and a floating balloon animation, both skipped under `prefers-reduced-motion`
+- Floating WhatsApp chat widget with quick-reply shortcuts, present on both `index.html` and `new-patient-checklist.html`
 - `new-patient-checklist.html` — a standalone, printable lead-magnet page (`noindex`) with checkable prep lists
 - Scroll-triggered fade-in animations via `IntersectionObserver`, with `prefers-reduced-motion` respected throughout
 - Footer with quick links, social placeholders, and a JS-injected copyright year
@@ -22,8 +24,9 @@ A static, single-page marketing website for a fictional healthcare clinic. Built
 
 - **HTML5** — semantic markup (`index.html`, `new-patient-checklist.html`)
 - **CSS3** — custom properties (ink-navy/brass/cream palette), mobile-first layout with breakpoints at 640px / 768px / 992px (`styles.css`)
-- **Vanilla JavaScript** — no libraries (`script.js`)
+- **Vanilla JavaScript** — no libraries (`script.js`), using the native Web Speech API for the post-submit voice message
 - **Fonts** — Fraunces (display) + Inter (body), loaded from Google Fonts
+- **Formspree** — third-party form-to-email backend for the enquiry form (no server code of our own)
 
 ## Project structure
 
@@ -36,6 +39,7 @@ A static, single-page marketing website for a fictional healthcare clinic. Built
 ├── robots.txt, sitemap.xml     # basic SEO
 ├── assets/screenshot.png       # homepage preview used in this README
 ├── .mcp.json                   # project-level Playwright MCP server config
+├── .claude/agents/             # project-level Claude Code subagent definitions (security-auditor, ui-ux-reviewer)
 └── CLAUDE.md                   # guidance for AI coding agents working in this repo
 ```
 
@@ -53,4 +57,4 @@ The site is deployed to GitHub Pages automatically via GitHub Actions (`.github/
 
 ## Notes
 
-The enquiry form is client-side only — on submit it validates the fields and logs the collected data to the browser console instead of sending it anywhere. The spot for wiring up a real backend API call is marked with a `TODO` comment in `initEnquiryForm` in `script.js`. The post-submit link to the New Patient Checklist is instant (no email is actually sent).
+The enquiry form has no server of its own — on submit, `initEnquiryForm` in `script.js` validates the fields client-side, then POSTs the data directly to a Formspree endpoint (`https://formspree.io/f/xgojbljq`), which emails the submission on to the clinic. There's no way to swap the destination email without creating a new Formspree form and updating that endpoint in `script.js`.
