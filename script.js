@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initFadeInOnScroll();
   initFooterYear();
   initEnquiryForm();
+  initStatCounters();
 });
 
 /* ===================== Mobile nav toggle ===================== */
@@ -51,6 +52,53 @@ function initFadeInOnScroll() {
 function initFooterYear() {
   const yearEl = document.getElementById('year');
   yearEl.textContent = new Date().getFullYear();
+}
+
+/* ===================== Trust-strip stat count-up ===================== */
+function initStatCounters() {
+  const targets = document.querySelectorAll('.trust-number');
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (!targets.length || prefersReducedMotion || !('IntersectionObserver' in window)) {
+    return;
+  }
+
+  const animate = (el) => {
+    const match = el.textContent.match(/^([\d,]+)(.*)$/);
+    if (!match) return;
+
+    const target = parseInt(match[1].replace(/,/g, ''), 10);
+    const suffix = match[2];
+    const hasCommas = match[1].includes(',');
+    const duration = 1200;
+    const start = performance.now();
+
+    const step = (now) => {
+      const progress = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const value = Math.round(target * eased);
+      el.textContent = (hasCommas ? value.toLocaleString('en-US') : String(value)) + suffix;
+      if (progress < 1) {
+        requestAnimationFrame(step);
+      }
+    };
+
+    requestAnimationFrame(step);
+  };
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          animate(entry.target);
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.4 }
+  );
+
+  targets.forEach((el) => observer.observe(el));
 }
 
 /* ===================== Enquiry form ===================== */
